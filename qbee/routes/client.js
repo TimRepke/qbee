@@ -46,4 +46,15 @@ router.post('/add/external', function(req, res, next) {
   }));
 });
 
+router.get('/connect', function(req, res, next) {
+  // wie im artikel
+});
+
+router.get('/status/playlist', function(req, res, next) {
+  // req.query.start
+  // req.query.end
+
+  // responds with all tracks in that range
+})
+
 module.exports = router;
