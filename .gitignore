@@ -1,3 +1,5 @@
 npm-debug.log
 qbee/node_modules
 .idea
+config.webserver
+config.mopidy
