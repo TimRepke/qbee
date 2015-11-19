@@ -1,0 +1,21 @@
+mopidy:
+   image: wernight/mopidy
+   env_file:
+    - ./config.mopidy
+   expose:
+    - "6680:6680"
+
+webserver:
+   build: docker
+   dockerfile: Dockerfile.node
+   ports:
+    - "12489:12489"
+   links:
+    - mopidy:mopidy
+   volumes:
+    - ./qbee:/data
+   env_file:
+    - ./config.webserver
+   working_dir: /data
+   command: bash -c "npm install; npm run watch"
+
