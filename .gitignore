@@ -3,3 +3,6 @@ qbee/node_modules
 .idea
 config.webserver
 config.mopidy
+config/config.webserver
+config/config.mopidy
+config/mopidy.conf
