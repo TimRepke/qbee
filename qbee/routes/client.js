@@ -1,9 +1,9 @@
 
 var logger = require('../shared/logger');
+var eventHandler = require('../server/event-handler');
 var express = require('express');
 var router = express.Router();
 
-var openConnections = [];
 
 function generateResponse(params) {
   if (params.status) {
@@ -66,22 +66,13 @@ router.get('/connect', function(req, res, next) {
   res.write('\n');
 
   // push this res object to our global variable
-  openConnections.push(res);
-  logger.log('opened connection; now open: ' + openConnections.length);
+  eventHandler.addClient(res);
 
   // When the request is closed, e.g. the browser window
   // is closed. We search through the open connections
   // array and remove this connection.
   req.on("close", function() {
-    var toRemove;
-    for (var j =0 ; j < openConnections.length ; j++) {
-      if (openConnections[j] == res) {
-        toRemove =j;
-        break;
-      }
-    }
-    openConnections.splice(j,1);
-    logger.log('closed connection; still open: ' + openConnections.length);
+    eventHandler.removeClient(res);
   });
 });
 
