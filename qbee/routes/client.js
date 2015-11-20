@@ -1,5 +1,9 @@
+
+var logger = require('../shared/logger');
 var express = require('express');
 var router = express.Router();
+
+var openConnections = [];
 
 function generateResponse(params) {
   if (params.status) {
@@ -11,7 +15,7 @@ function generateResponse(params) {
     return {
       successful: false,
       query: params.query,
-      error: params.error || '[unknown error'
+      error: params.error || '[unknown error]'
     };
   }
 }
@@ -29,6 +33,7 @@ router.get('/add/youtube', function(req, res, next) {
 });
 
 router.get('/add/spotify', function(req, res, next) {
+  logger.log('kasjdkljas');
   res.send(generateResponse({
     error: 'adding spotify currently not supported'
   }));
@@ -45,16 +50,5 @@ router.post('/add/external', function(req, res, next) {
     error: 'adding uploaded files currently not supported'
   }));
 });
-
-router.get('/connect', function(req, res, next) {
-  // wie im artikel
-});
-
-router.get('/status/playlist', function(req, res, next) {
-  // req.query.start
-  // req.query.end
-
-  // responds with all tracks in that range
-})
 
 module.exports = router;
