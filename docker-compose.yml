@@ -1,7 +1,9 @@
 mopidy:
    image: wernight/mopidy
    env_file:
-    - ./config.mopidy
+    - ./config/config.mopidy
+   volumes:
+    - ./config/mopidy.conf:/etc/mopidy/mopidy.conf
    expose:
     - "6680:6680"
 
@@ -15,7 +17,7 @@ webserver:
    volumes:
     - ./qbee:/data
    env_file:
-    - ./config.webserver
+    - ./config/config.webserver
    working_dir: /data
    command: bash -c "npm install; npm run watch"
 
