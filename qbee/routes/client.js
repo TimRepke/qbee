@@ -1,6 +1,7 @@
 
 var logger = require('../shared/logger');
 var eventHandler = require('../server/event-handler');
+var queueManager = require('../server/queue-manager');
 var express = require('express');
 var router = express.Router();
 
