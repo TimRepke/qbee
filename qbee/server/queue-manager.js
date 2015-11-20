@@ -2,6 +2,7 @@
 
 var MOPIDY_PORT = 6680;
 var MOPIDY_HOST = 'mopidy';
+var QBEE_LIST_NAME = 'QBeeList';
 
 var utils = require('../shared/utils');
 var logger = require('../shared/logger');
@@ -14,11 +15,14 @@ var queue = [];
 // mopidy server status
 var moppy = { // FIXME: dummy for now
     isConnected: false,
-    assertConnection: function(deferred) {
-        deferred.reject();
-        throw new Error('Mody Server not connected');
+    assertConnection: function () {
+        logger.trace('checking for connection to Mopidy');
+        if(!moppy || !moppy.isConnected) {
+            throw new Error('Mopidy Server not connected');
+        }
+        return true;
     },
-    currentPlaylist: 0,
+    currentPlaylist: null,
     currentTrack: {
         name: '',
         playtime: '',
@@ -34,36 +38,59 @@ var mopidy = new Mopidy({
 
 // Mopidy event handlers
 //mopidy.on(console.log.bind(console));
-mopidy.on("state:online", function() {
+mopidy.on("state:online", function () {
     moppy.isConnected = true;
     logger.info('Mopidy server connected');
 });
 
 var mopidyManager = {
-    getActivePlaylist: function() {
+    getPlaylist: function () {
         var deferred = Q.defer();
-        moppy.assertConnection(deferred);
-
-        mopidy.playlists.getPlaylists()
-            .fold(utils.get, moppy.currentPlaylist)
-            .then(function(playlist) {
+        logger.trace('getting active playlist');
+        moppy.assertConnection();
+        mopidy.playlists.getPlaylists().then(function (playlists) {
+            logger.trace('num playlists: ' + playlists.length);
+            if (playlists && playlists.length > 0 && moppy.currentPlaylist) {
+                logger.trace('Playlist is there already');
+                deferred.resolve(playlists[moppy.currentPlaylist]);
+                return playlists[moppy.currentPlaylist];
+            }
+            if(playlists && playlists.length > 0) {
+                logger.trace('playlists exist, try to find ' + QBEE_LIST_NAME);
+                for (var i = 0; i < playlists.length; i++) {
+                    if (playlists[i].name === QBEE_LIST_NAME) {
+                        moppy.currentPlaylist = i;
+                        logger.trace('found ' + QBEE_LIST_NAME + ' at ' + i);
+                        deferred.resolve(playlists[moppy.currentPlaylist]);
+                        return playlists[moppy.currentPlaylist];
+                    }
+                }
+            }
+            logger.trace('creating playlist');
+            mopidy.playlists.create({name: QBEE_LIST_NAME}).then(function (playlist) {
+                moppy.currentPlaylist = 0;
                 deferred.resolve(playlist);
-            });
+                return playlist;
+            }).done();
+        }).done();
 
         return deferred.promise;
     }
 };
 
 var queueManager = {
-    getCurrentSong: function() {
+    getCurrentSong: function () {
         return 'Some Song Title';
     },
 
     queue: {
-        push: function(track) {
-
+        push: function (track) {
 
         }
+    },
+
+    debug: function(conf) {
+        return mopidyManager.getPlaylist();
     }
 };
 

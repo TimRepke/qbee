@@ -28,6 +28,18 @@ router.get('/add/soundcloud', function(req, res, next) {
 });
 
 router.get('/add/youtube', function(req, res, next) {
+  /*
+   Usage
+
+   Simply use search for filename in your MPD client or add YouTube URL to playlist prefixed by yt:.
+
+   Example video:
+
+   yt:http://www.youtube.com/watch?v=Njpw2PVb1c0
+   Example for playlist:
+
+   yt:http://www.youtube.com/playlist?list=PLeCg_YDclAETQHa8VyFUHKC_Ly0HUWUnq
+   */
   res.send(generateResponse({
     error: 'adding youtube currently not supported'
   }));
@@ -77,11 +89,17 @@ router.get('/connect', function(req, res, next) {
   });
 });
 
-router.get('/status/playlist', function(req, res, next) {
+router.get('/status/tracklist', function(req, res, next) {
   // req.query.start
   // req.query.end
 
   // responds with all tracks in that range
+});
+
+router.get('/debug', function(req, res, next) {
+  queueManager.debug().then(function(pl){
+    res.send(pl);
+  })
 });
 
 module.exports = router;
