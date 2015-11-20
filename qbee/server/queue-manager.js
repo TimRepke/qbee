@@ -17,7 +17,7 @@ var moppy = { // FIXME: dummy for now
     isConnected: false,
     assertConnection: function () {
         logger.trace('checking for connection to Mopidy');
-        if(!moppy || !moppy.isConnected) {
+        if (!moppy || !moppy.isConnected) {
             throw new Error('Mopidy Server not connected');
         }
         return true;
@@ -55,7 +55,7 @@ var mopidyManager = {
                 deferred.resolve(playlists[moppy.currentPlaylist]);
                 return playlists[moppy.currentPlaylist];
             }
-            if(playlists && playlists.length > 0) {
+            if (playlists && playlists.length > 0) {
                 logger.trace('playlists exist, try to find ' + QBEE_LIST_NAME);
                 for (var i = 0; i < playlists.length; i++) {
                     if (playlists[i].name === QBEE_LIST_NAME) {
@@ -85,11 +85,25 @@ var queueManager = {
 
     queue: {
         push: function (track) {
-
+            var deferred = Q.defer();
+            if (track.uri) {
+                mopidy.tracklist.add({
+                    uri: track.uri
+                }).then(function (result) {
+                    if(result.length>0) {
+                        logger.info('added track via uri: ' + track.uri);
+                        deferred.resolve(result);
+                    } else {
+                        logger.warn('adding track failed with uri ' + track.uri);
+                        deferred.reject('adding track failed with uri ' + track.uri);
+                    }
+                });
+            }
+            return deferred.promise;
         }
     },
 
-    debug: function(conf) {
+    debug: function (conf) {
         return mopidyManager.getPlaylist();
     }
 };
