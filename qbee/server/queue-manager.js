@@ -14,6 +14,10 @@ var queue = [];
 // mopidy server status
 var moppy = { // FIXME: dummy for now
     isConnected: false,
+    assertConnection: function(deferred) {
+        deferred.reject();
+        throw new Error('Mody Server not connected');
+    },
     currentPlaylist: 0,
     currentTrack: {
         name: '',
@@ -38,11 +42,14 @@ mopidy.on("state:online", function() {
 var mopidyManager = {
     getActivePlaylist: function() {
         var deferred = Q.defer();
+        moppy.assertConnection(deferred);
+
         mopidy.playlists.getPlaylists()
             .fold(utils.get, moppy.currentPlaylist)
             .then(function(playlist) {
                 deferred.resolve(playlist);
             });
+
         return deferred.promise;
     }
 };
