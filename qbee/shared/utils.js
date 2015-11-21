@@ -1,4 +1,7 @@
 module.exports = {
+    events: {
+        CONNECTION_ESTABLISHED: 'CONNECTION_ESTABLISHED'
+    },
     get: function (key, object) {
         return object[key];
     },

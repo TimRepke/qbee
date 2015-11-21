@@ -55,7 +55,10 @@ mopidy.on("state:online", function () {
     moppy.isConnected = true;
     logger.info('Mopidy server connected');
 });
-
+mopidy.on("state:offline", function () {
+    moppy.isConnected = false;
+    logger.info('Mopidy server disconnected');
+});
 mopidy.on('event:tracklistChanged', function(){
     // TODO update local queue
     mopidy.playback.play();
