@@ -57,6 +57,7 @@ mopidy.on("state:online", function () {
 });
 
 mopidy.on('event:tracklistChanged', function(){
+    // TODO update local queue
     mopidy.playback.play();
 });
 
