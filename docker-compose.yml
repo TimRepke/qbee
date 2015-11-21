@@ -1,9 +1,10 @@
 mopidy:
-   image: wernight/mopidy
-   env_file:
-    - ./config/config.mopidy
+   build: docker
+   dockerfile: Dockerfile.mopidy
    volumes:
-    - ./config/mopidy.conf:/etc/mopidy/mopidy.conf
+    - ./config/mopidy.conf:/var/lib/mopidy/.config/mopidy/mopidy.conf
+    - ./config/config.mopidy:/config.mopidy
+    - ./config/entrypoint.sh:/entrypoint.sh
    expose:
     - "6680:6680"
 

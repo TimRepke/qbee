@@ -1,0 +1,44 @@
+FROM ubuntu:latest
+
+# Default configuration
+ADD ../config/mopidy.conf /var/lib/mopidy/.config/mopidy/mopidy.conf
+
+# Start helper script
+#ADD ../config/entrypoint.sh /entrypoint.sh
+
+RUN apt-get update
+RUN apt-get install -y \
+    curl \
+    gstreamer0.10-alsa \
+    python-crypto \
+    build-essential libssl-dev libffi-dev python-dev
+RUN curl -L https://apt.mopidy.com/mopidy.gpg -o /tmp/mopidy.gpg
+RUN curl -L https://apt.mopidy.com/mopidy.list -o /etc/apt/sources.list.d/mopidy.list
+RUN apt-key add /tmp/mopidy.gpg
+RUN apt-get update
+RUN apt-get install -y \
+    mopidy \
+    mopidy-soundcloud \
+    mopidy-spotify
+RUN curl -L https://bootstrap.pypa.io/get-pip.py | python -
+RUN pip install -U six
+RUN pip install \
+    cryptography \
+    Mopidy-GMusic \
+    Mopidy-YouTube
+RUN apt-get purge --auto-remove -y curl
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ~/.cache
+RUN chown mopidy:audio -R /var/lib/mopidy/.config
+RUN chown mopidy:audio /entrypoint.sh
+
+USER mopidy
+
+VOLUME /var/lib/mopidy/local
+VOLUME /var/lib/mopidy/media
+
+EXPOSE 6600
+EXPOSE 6680
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/bin/mopidy"]
