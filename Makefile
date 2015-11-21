@@ -4,7 +4,7 @@ PULSE_COOKIE_DATA=$(shell pax11publish -d | grep --color=never -Po '(?<=^Cookie:
 all: config/config.mopidy
 	docker-compose build
 
-run: writeconfig
+run: config/config.mopidy
 	docker-compose up
 
 config/config.mopidy:
