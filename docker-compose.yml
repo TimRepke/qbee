@@ -1,9 +1,10 @@
 mopidy:
    build: docker
    dockerfile: Dockerfile.mopidy
+   env_file:
+    - ./config/config.mopidy
    volumes:
-    - ./config/mopidy.conf:/var/lib/mopidy/.config/mopidy/mopidy.conf
-    - ./config/config.mopidy:/config.mopidy
+    - ./config/mopidy.conf:/etc/mopidy/mopidy.conf
     - ./config/entrypoint.sh:/entrypoint.sh
    expose:
     - "6680:6680"
