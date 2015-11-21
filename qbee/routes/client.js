@@ -27,7 +27,7 @@ router.get('/add/external', function (req, res, next) {
         // Need 11 character video id or the URL of the video. (place in uri)
         case 'youtube':
             var ytUri = 'yt:' + utils.ensureHTTP(req.query.url);
-            queueManager.queue.push({
+            queueManager.push({
                 uri: ytUri
             }).then(function(data){
                 res.send(generateResponse({
@@ -72,6 +72,21 @@ router.post('/add/external', function (req, res, next) {
     }));
 });
 
+router.get('/status/tracklist', function (req, res, next) {
+    // req.query.start
+    // req.query.end
+
+    // responds with all tracks in that range
+});
+
+router.get('/vote', function (req, res, next) {
+    // req.query.trackUUID
+    // req.query.clientUUID
+
+    // responds with all tracks in that range
+});
+
+
 router.get('/connect', function (req, res, next) {
     // inspired by http://www.smartjava.org/content/html5-server-sent-events-angularjs-nodejs-and-expressjs
     // set timeout as high as possible
@@ -97,17 +112,5 @@ router.get('/connect', function (req, res, next) {
     });
 });
 
-router.get('/status/tracklist', function (req, res, next) {
-    // req.query.start
-    // req.query.end
-
-    // responds with all tracks in that range
-});
-
-router.get('/debug', function (req, res, next) {
-    queueManager.debug().then(function (pl) {
-        res.send(pl);
-    })
-});
 
 module.exports = router;
